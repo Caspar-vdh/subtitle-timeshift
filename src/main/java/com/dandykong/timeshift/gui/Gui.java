@@ -1,6 +1,7 @@
 package com.dandykong.timeshift.gui;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,6 +15,8 @@ public class Gui extends JFrame implements ActionListener {
 
     private final LogArea logArea;
     private final ValueEntryPanel valueEntryPanel;
+
+    private File selectedFile;
 
     public Gui() {
         logArea = new LogArea();
@@ -46,13 +49,13 @@ public class Gui extends JFrame implements ActionListener {
         final String actionCommand = e.getActionCommand();
         if (ACTION_COMMAND_OPEN_FILE.equals(actionCommand)) {
             JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+            jfc.setFileFilter(new FileNameExtensionFilter("Subtitle file (*.srt)", "srt"));
 
             int returnValue = jfc.showOpenDialog(this);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = jfc.getSelectedFile();
-                System.out.println(selectedFile.getAbsolutePath());
+                selectedFile = jfc.getSelectedFile();
+                logArea.setSelectedFile(selectedFile.getAbsolutePath());
             }
         }
-        logArea.setSelectedFile(actionCommand);
     }
 }
