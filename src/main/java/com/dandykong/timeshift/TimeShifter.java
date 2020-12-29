@@ -7,22 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TimeShifter {
-    private static final String TIMESTAMP_LINE_STRING = "(\\d\\d):(\\d\\d):(\\d\\d),(\\d\\d\\d)";
-    private static final Pattern TIMESTAMP_LINE_PATTERN = Pattern.compile(TIMESTAMP_LINE_STRING);
-
-    public static boolean isTimestampLine(String timestampLine) {
-//        if (TIMESTAMP_LINE_PATTERN.)
-        Matcher matcher = TIMESTAMP_LINE_PATTERN.matcher(timestampLine);
-        if (matcher.find()) {
-            for (int i = 0; i <= matcher.groupCount(); i++) {
-                String group = matcher.group(i);
-                System.out.println(group);
-            }
-        }
-
-        return "00:00:08,095 --> 00:00:11,098".equals(timestampLine);
-    }
-
     public static void convert(BufferedReader in, BufferedWriter out, int shiftSeconds, int shiftMillis) throws IOException {
         // preconditions:
         // in not null

@@ -15,10 +15,12 @@ public class Gui extends JFrame implements ActionListener {
 
     private final LogArea logArea;
     private final ValueEntryPanel valueEntryPanel;
-
+    private final Listener listener;
+    private JButton actionButton;
     private File selectedFile;
 
-    public Gui() {
+    public Gui(Listener listener) {
+        this.listener = listener;
         logArea = new LogArea();
         valueEntryPanel = new ValueEntryPanel(logArea::setUiError);
     }
@@ -29,12 +31,13 @@ public class Gui extends JFrame implements ActionListener {
 
         JButton openButton = new JButton(ACTION_COMMAND_OPEN_FILE);
         openButton.addActionListener(this);
-        JButton saveButton = new JButton(ACTION_COMMAND_SHIFT);
-        saveButton.addActionListener(this);
+        actionButton = new JButton(ACTION_COMMAND_SHIFT);
+        actionButton.addActionListener(this);
+        actionButton.setEnabled(false);
 
         JPanel buttonPanel = new JPanel(); //use FlowLayout
         buttonPanel.add(openButton);
-        buttonPanel.add(saveButton);
+        buttonPanel.add(actionButton);
 
         getContentPane().add(buttonPanel, BorderLayout.PAGE_START);
         getContentPane().add(valueEntryPanel, BorderLayout.CENTER);
@@ -42,6 +45,10 @@ public class Gui extends JFrame implements ActionListener {
 
         pack();
         setVisible(true);
+    }
+
+    public void showErrorMessage(String errorMessage) {
+        logArea.setTimeShifterError(errorMessage);
     }
 
     @Override
@@ -55,7 +62,18 @@ public class Gui extends JFrame implements ActionListener {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 selectedFile = jfc.getSelectedFile();
                 logArea.setSelectedFile(selectedFile.getAbsolutePath());
+                actionButton.setEnabled(true);
+            }
+        } else if (ACTION_COMMAND_SHIFT.equals(actionCommand)) {
+            if (listener != null) {
+                listener.onActionTriggered(selectedFile,
+                        valueEntryPanel.getShiftSeconds(),
+                        valueEntryPanel.getShiftMillis());
             }
         }
+    }
+
+    public interface Listener {
+        void onActionTriggered(File selectedFile, int secondsShift, int millisShift);
     }
 }
